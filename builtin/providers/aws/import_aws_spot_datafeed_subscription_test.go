@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -8,7 +9,7 @@ import (
 )
 
 func TestAccAWSSpotDatafeedSubscription_importBasic(t *testing.T) {
-	resourceName := "aws_spot_datafeed_subscription.foo"
+	resourceName := "aws_spot_datafeed_subscription.baz"
 	ri := acctest.RandIntRange(1, 50000)
 
 	resource.Test(t, resource.TestCase{
@@ -17,7 +18,7 @@ func TestAccAWSSpotDatafeedSubscription_importBasic(t *testing.T) {
 		CheckDestroy: testAccCheckAWSSpotDatafeedSubscriptionDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSSpotDatafeedSubscription_basic(ri),
+				Config: testAccAWSSpotDatafeedSubscription_import(ri),
 			},
 
 			{
@@ -27,4 +28,16 @@ func TestAccAWSSpotDatafeedSubscription_importBasic(t *testing.T) {
 			},
 		},
 	})
+}
+
+func testAccAWSSpotDatafeedSubscription_import(randInt int) string {
+	return fmt.Sprintf(`
+resource "aws_s3_bucket" "baz" {
+	bucket = "tf-spot-datafeed-disappears-%d"
+}
+
+resource "aws_spot_datafeed_subscription" "baz" {
+	bucket = "${aws_s3_bucket.baz.bucket}"
+}
+`, randInt)
 }
