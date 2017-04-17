@@ -22,9 +22,9 @@ func TestAccAWSSpotDatafeedSubscription_basic(t *testing.T) {
 		CheckDestroy: testAccCheckAWSSpotDatafeedSubscriptionDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSSpotDatafeedSubscription(ri),
+				Config: testAccAWSSpotDatafeedSubscription_basic(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSSpotDatafeedSubscriptionExists("aws_spot_datafeed_subscription.default", &subscription),
+					testAccCheckAWSSpotDatafeedSubscriptionExists("aws_spot_datafeed_subscription.foo", &subscription),
 				),
 			},
 		},
@@ -65,9 +65,9 @@ func TestAccAWSSpotDatafeedSubscription_disappears(t *testing.T) {
 		CheckDestroy: testAccCheckAWSSpotDatafeedSubscriptionDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSSpotDatafeedSubscription(ri),
+				Config: testAccAWSSpotDatafeedSubscription_disappears(ri),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckAWSSpotDatafeedSubscriptionExists("aws_spot_datafeed_subscription.default", &subscription),
+					testAccCheckAWSSpotDatafeedSubscriptionExists("aws_spot_datafeed_subscription.bar", &subscription),
 					testAccCheckAWSSpotDatafeedSubscriptionDisappears(&subscription),
 				),
 				ExpectNonEmptyPlan: true,
@@ -126,15 +126,26 @@ func testAccCheckAWSSpotDatafeedSubscriptionDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAWSSpotDatafeedSubscription(randInt int) string {
+func testAccAWSSpotDatafeedSubscription_basic(randInt int) string {
 	return fmt.Sprintf(`
-resource "aws_s3_bucket" "default" {
-	bucket = "tf-spot-datafeed-%d"
+resource "aws_s3_bucket" "foo" {
+	bucket = "tf-spot-datafeed-basic-%d"
 }
 
-resource "aws_spot_datafeed_subscription" "default" {
-	bucket = "${aws_s3_bucket.default.bucket}"
-	depends_on = ["aws_s3_bucket.default"]
+resource "aws_spot_datafeed_subscription" "foo" {
+	bucket = "${aws_s3_bucket.foo.bucket}"
+}
+`, randInt)
+}
+
+func testAccAWSSpotDatafeedSubscription_disappears(randInt int) string {
+	return fmt.Sprintf(`
+resource "aws_s3_bucket" "bar" {
+	bucket = "tf-spot-datafeed-disappears-%d"
+}
+
+resource "aws_spot_datafeed_subscription" "bar" {
+	bucket = "${aws_s3_bucket.bar.bucket}"
 }
 `, randInt)
 }
