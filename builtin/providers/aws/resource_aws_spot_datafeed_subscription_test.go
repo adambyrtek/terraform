@@ -134,6 +134,7 @@ resource "aws_s3_bucket" "default" {
 
 resource "aws_spot_datafeed_subscription" "default" {
 	bucket = "${aws_s3_bucket.default.bucket}"
+	depends_on = ["aws_s3_bucket.default"]
 }
 `, randInt)
 }
