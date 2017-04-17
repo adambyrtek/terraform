@@ -14,14 +14,14 @@ import (
 
 func TestAccAWSSpotDatafeedSubscription_basic(t *testing.T) {
 	var subscription ec2.SpotDatafeedSubscription
-	ri := acctest.RandInt()
+	ri := acctest.RandIntRange(1, 50000)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSSpotDatafeedSubscriptionDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSSpotDatafeedSubscription(ri),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSSpotDatafeedSubscriptionExists("aws_spot_datafeed_subscription.default", &subscription),
@@ -57,14 +57,14 @@ func testAccCheckAWSSpotDatafeedSubscriptionDisappears(subscription *ec2.SpotDat
 
 func TestAccAWSSpotDatafeedSubscription_disappears(t *testing.T) {
 	var subscription ec2.SpotDatafeedSubscription
-	ri := acctest.RandInt()
+	ri := acctest.RandIntRange(1, 50000)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckAWSSpotDatafeedSubscriptionDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccAWSSpotDatafeedSubscription(ri),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAWSSpotDatafeedSubscriptionExists("aws_spot_datafeed_subscription.default", &subscription),
